@@ -1,0 +1,1101 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<ng-container *ngIf="!isLoading">
+  <div class="chat-minor">
+    <div class="sidebar-menu">
+      <a routerLink="/">
+        <i class="fas fa-arrow-left"></i>
+        <div>Home</div>
+      </a>
+      <a (click)="setMode('chat')" [class.active]="mode === 'chat'">
+        <i class="fas fa-comment-dots"></i>
+        <div>Chat</div>
+      </a>
+      <a (click)="setMode('group')" [class.active]="mode === 'group'">
+        <i class="fas fa-people-roof"></i>
+        <div>Groups</div>
+      </a>
+      <a routerLink="/user/profile/" [queryParams]="{ id: isAuth }">
+        <div class="img-container">
+          <img src="/api/fetch-pic/profile/{{ isAuth }}" alt="" />
+        </div>
+        <div>Profile</div>
+      </a>
+    </div>
+
+    <div class="sidebar-info">
+      <ng-container *ngIf="mode === 'chat'">
+        <div class="top-menu">
+          <button
+            class="show-chat-filter-opt"
+            (click)="showTmDropdown('filter')"
+          >
+            <div>{{ filter }} Chats</div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="tm-show-search" (click)="showSearchBar('tm')">
+            <i class="fas fa-magnifying-glass"></i>
+          </div>
+          <div class="tm-show-new-chat-opts" (click)="showTmDropdown('new')">
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+
+          <div class="top-menu-dropdown chat-filter-opts">
+            <button
+              (click)="setFilter('all')"
+              [class.active]="filter === 'all'"
+            >
+              All Chats
+            </button>
+            <button
+              (click)="setFilter('pinned')"
+              [class.active]="filter === 'pinned'"
+            >
+              Pinned Chats
+            </button>
+            <button
+              (click)="setFilter('archived')"
+              [class.active]="filter === 'archived'"
+            >
+              Archived Chats
+            </button>
+          </div>
+
+          <div class="tm-search-bar">
+            <i class="fas fa-magnifying-glass"></i>
+            <input
+              type="text"
+              placeholder="Search..."
+              (keyup)="searchForChat()"
+            />
+            <i class="fas fa-close" (click)="hideSearchBar('tm')"></i>
+          </div>
+
+          <div class="top-menu-dropdown new-chat-opts">
+            <button (click)="showOrHideModal('new-chat', 'show')">
+              <i class="fas fa-comment-medical"></i>
+              <div>New Chat</div>
+            </button>
+            <button (click)="showOrHideModal('new-group', 'show')">
+              <i class="fas fa-circle-user"></i>
+              <div>New Group</div>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="filter-main"
+          *ngIf="chatSearch.length > 0"
+          style="margin-top: 50px"
+        >
+          <div class="filtered-chats-div">
+            <ng-container *ngFor="let brief of chatSearch">
+              <app-chat-brief
+                (showDeleteModal)="onShowDeleteModal($event)"
+                *ngIf="!brief.deleted.includes(isAuth.toString())"
+                [attr.data-id]="brief.chatRoomId"
+                (click)="
+                  togglePage('add', 'chat-major');
+                  setCurrentRoom($event, 'chat-brief')
+                "
+                [brief]="brief"
+                [isAuth]="isAuth.toString()"
+                [onlineUsers]="onlineUsers"
+                [currentRoomId]="currentRoomId"
+                [username]="username"
+                [chats]="allChats"
+                class="chat-brief"
+              ></app-chat-brief>
+            </ng-container>
+          </div>
+        </div>
+
+        <ng-container *ngIf="chatSearch.length === 0">
+          <div class="online-now" *ngIf="getOnlineChats().length > 0">
+            <p>Online Now</p>
+            <div class="online-users">
+              <div
+                class="online-user"
+                *ngFor="let chat of getOnlineChats()"
+                (click)="setCurrentRoom($event, 'online-user')"
+                [attr.data-id]="getChatRecipient(chat.recipient).username"
+              >
+                <div class="img-container">
+                  <img
+                    src="/api/fetch-pic/profile/{{
+                      getChatRecipient(chat.recipient).id
+                    }}"
+                    alt="img"
+                  />
+                </div>
+                <div></div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="pinned-chats filter-main"
+            *ngIf="
+              (filter === 'all' && pinnedLength(chats) > 0) ||
+              filter === 'pinned'
+            "
+          >
+            <div class="header">
+              <i class="fas fa-thumbtack"></i>
+              <div>Pinned Chats</div>
+            </div>
+
+            <div class="filtered-chats-div">
+              <ng-container *ngFor="let brief of chats">
+                <ng-container
+                  *ngIf="brief.filter.pinned.includes(isAuth.toString())"
+                >
+                  <app-chat-brief
+                    (showDeleteModal)="onShowDeleteModal($event)"
+                    *ngIf="!brief.deleted.includes(isAuth.toString())"
+                    [attr.data-id]="brief.chatRoomId"
+                    (click)="
+                      togglePage('add', 'chat-major');
+                      setCurrentRoom($event, 'chat-brief')
+                    "
+                    [brief]="brief"
+                    [isAuth]="isAuth.toString()"
+                    [onlineUsers]="onlineUsers"
+                    [currentRoomId]="currentRoomId"
+                    [username]="username"
+                    [chats]="allChats"
+                    class="chat-brief"
+                  ></app-chat-brief>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="archived-chats filter-main" *ngIf="filter === 'archived'">
+            <div class="header">
+              <i class="fas fa-box-archive"></i>
+              <div>Archived Chats</div>
+            </div>
+
+            <div class="filtered-chats-div">
+              <ng-container *ngFor="let brief of chats">
+                <ng-container
+                  *ngIf="brief.filter.archived.includes(isAuth.toString())"
+                >
+                  <app-chat-brief
+                    (showDeleteModal)="onShowDeleteModal($event)"
+                    *ngIf="!brief.deleted.includes(isAuth.toString())"
+                    [attr.data-id]="brief.chatRoomId"
+                    (click)="
+                      togglePage('add', 'chat-major');
+                      setCurrentRoom($event, 'chat-brief')
+                    "
+                    [brief]="brief"
+                    [isAuth]="isAuth.toString()"
+                    [onlineUsers]="onlineUsers"
+                    [currentRoomId]="currentRoomId"
+                    [username]="username"
+                    [chats]="allChats"
+                    class="chat-brief"
+                  ></app-chat-brief>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="recent-chats filter-main" *ngIf="filter === 'all'">
+            <div class="header">
+              <i class="fas fa-comment-dots"></i>
+              <div>Recent Chats</div>
+            </div>
+
+            <div class="filtered-chats-div">
+              <ng-container *ngFor="let brief of chats">
+                <ng-container
+                  *ngIf="
+                    !brief.filter.pinned.includes(isAuth.toString()) &&
+                    !brief.filter.archived.includes(isAuth.toString())
+                  "
+                >
+                  <app-chat-brief
+                    (showDeleteModal)="onShowDeleteModal($event)"
+                    *ngIf="!brief.deleted.includes(isAuth.toString())"
+                    [attr.data-id]="brief.chatRoomId"
+                    (click)="
+                      togglePage('add', 'chat-major');
+                      setCurrentRoom($event, 'chat-brief')
+                    "
+                    [brief]="brief"
+                    [isAuth]="isAuth.toString()"
+                    [onlineUsers]="onlineUsers"
+                    [currentRoomId]="currentRoomId"
+                    [username]="username"
+                    [chats]="allChats"
+                    class="chat-brief"
+                  ></app-chat-brief>
+                </ng-container>
+              </ng-container>
+            </div>
+          </div>
+        </ng-container>
+      </ng-container>
+
+      <ng-container *ngIf="mode === 'group'">
+        <div class="top-menu">
+          <button
+            class="show-chat-filter-opt"
+            (click)="showTmDropdown('filter')"
+          >
+            <div>{{ filter }} Groups</div>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="tm-show-search" (click)="showSearchBar('tm')">
+            <i class="fas fa-magnifying-glass"></i>
+          </div>
+          <div class="tm-show-new-chat-opts" (click)="showTmDropdown('new')">
+            <i class="fas fa-ellipsis-vertical"></i>
+          </div>
+
+          <div class="top-menu-dropdown chat-filter-opts">
+            <button (click)="setFilter('all')">All Groups</button>
+            <button (click)="setFilter('pinned')">Pinned Groups</button>
+            <button (click)="setFilter('archived')">Archived Groups</button>
+          </div>
+
+          <div class="tm-search-bar">
+            <i class="fas fa-magnifying-glass"></i>
+            <input type="text" placeholder="Search..." />
+            <i class="fas fa-close" (click)="hideSearchBar('tm')"></i>
+          </div>
+
+          <div class="top-menu-dropdown new-chat-opts">
+            <button (click)="showOrHideModal('new-group', 'show')">
+              <i class="fas fa-comment-medical"></i>
+              <div>New Group</div>
+            </button>
+            <button (click)="showOrHideModal('join-group', 'show')">
+              <i class="fas fa-circle-user"></i>
+              <div>Join Group</div>
+            </button>
+          </div>
+        </div>
+
+        <div
+          class="pinned-chats filter-main"
+          *ngIf="
+            (filter === 'all' && pinnedLength(groupChats) > 0) ||
+            filter === 'pinned'
+          "
+        >
+          <div class="header">
+            <i class="fas fa-thumbtack"></i>
+            <div>Pinned Groups</div>
+          </div>
+
+          <div class="filtered-chats-div">
+            <ng-container *ngFor="let brief of groupChats">
+              <ng-container
+                *ngIf="brief.filter.pinned.includes(isAuth.toString())"
+              >
+                <app-chat-brief
+                  (showDeleteModal)="onShowDeleteModal($event)"
+                  *ngIf="!brief.deleted.includes(isAuth.toString())"
+                  [attr.data-id]="brief.chatRoomId"
+                  (click)="
+                    togglePage('add', 'chat-major');
+                    setCurrentRoom($event, 'chat-brief')
+                  "
+                  [brief]="brief"
+                  [isAuth]="isAuth.toString()"
+                  [onlineUsers]="onlineUsers"
+                  [currentRoomId]="currentRoomId"
+                  [username]="username"
+                  [chats]="allChats"
+                  class="chat-brief"
+                ></app-chat-brief>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="recent-chats filter-main" *ngIf="filter === 'all'">
+          <div class="header">
+            <i class="fas fa-comment-dots"></i>
+            <div>Recent Groups</div>
+          </div>
+
+          <div class="filtered-chats-div">
+            <ng-container *ngFor="let brief of groupChats">
+              <ng-container
+                *ngIf="
+                  !brief.filter.pinned.includes(isAuth.toString()) &&
+                  !brief.filter.archived.includes(isAuth.toString())
+                "
+              >
+                <app-chat-brief
+                  (showDeleteModal)="onShowDeleteModal($event)"
+                  *ngIf="!brief.deleted.includes(isAuth.toString())"
+                  [attr.data-id]="brief.chatRoomId"
+                  (click)="
+                    togglePage('add', 'chat-major');
+                    setCurrentRoom($event, 'chat-brief')
+                  "
+                  [brief]="brief"
+                  [isAuth]="isAuth.toString()"
+                  [onlineUsers]="onlineUsers"
+                  [currentRoomId]="currentRoomId"
+                  [username]="username"
+                  [chats]="allChats"
+                  class="chat-brief"
+                ></app-chat-brief>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+
+        <div class="archived-chats filter-main" *ngIf="filter === 'archived'">
+          <div class="header">
+            <i class="fas fa-box-archive"></i>
+            <div>Archived Groups</div>
+          </div>
+
+          <div class="filtered-chats-div">
+            <ng-container *ngFor="let brief of groupChats">
+              <ng-container
+                *ngIf="brief.filter.archived.includes(isAuth.toString())"
+              >
+                <app-chat-brief
+                  (showDeleteModal)="onShowDeleteModal($event)"
+                  *ngIf="!brief.deleted.includes(isAuth.toString())"
+                  [attr.data-id]="brief.chatRoomId"
+                  (click)="
+                    togglePage('add', 'chat-major');
+                    setCurrentRoom($event, 'chat-brief')
+                  "
+                  [brief]="brief"
+                  [isAuth]="isAuth.toString()"
+                  [onlineUsers]="onlineUsers"
+                  [currentRoomId]="currentRoomId"
+                  [username]="username"
+                  [chats]="allChats"
+                  class="chat-brief"
+                ></app-chat-brief>
+              </ng-container>
+            </ng-container>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="chat-major show">
+    <img
+      src="../../../../assets/images/text-bg.jpg"
+      alt=""
+      class="background-image"
+    />
+
+    <div class="start-new-chat" [class.show]="!currentRoomId">
+      <div>Click now to start chatting with other users</div>
+      <button (click)="showOrHideModal('new-chat', 'show')">
+        Start New Chat
+      </button>
+    </div>
+
+    <div class="major-header" [class.close]="!currentRoomId">
+      <div class="header-left">
+        <button class="hl-back" (click)="togglePage('remove', 'chat-major')">
+          <i class="fas fa-arrow-left"></i>
+        </button>
+        <div class="img-container">
+          <img
+            [src]="
+              fetchChat(null, chats)
+                ? '/api/fetch-pic/profile/' +
+                  getChatRecipient(fetchChat(null, chats)!.recipient).id
+                : fetchChat(null, groupChats)
+                ? '/api/fetch-pic/group/' +
+                  fetchChat(null, groupChats)?.chatRoomId
+                : ''
+            "
+            alt="profile"
+          />
+        </div>
+
+        <div class="hl-details">
+          <ng-container *ngIf="fetchChat(null, chats)">
+            <p class="name">
+              {{ getChatRecipient(fetchChat(null, chats)!.recipient).username }}
+            </p>
+            <ng-container
+              *ngIf="
+                !getChatRecipient(fetchChat(null, chats)!.recipient).typing
+              "
+            >
+              <span
+                *ngIf="
+                  onlineUsers.includes(
+                    getChatRecipient(fetchChat(null, chats)!.recipient)
+                      .username!
+                  )
+                "
+                class="online"
+                >Online</span
+              >
+            </ng-container>
+            <div
+              class="typing-animation"
+              *ngIf="getChatRecipient(fetchChat(null, chats)!.recipient).typing"
+            >
+              Typing <i class="fas fa-ellipsis fa-bounce"></i>
+            </div>
+          </ng-container>
+
+          <ng-container *ngIf="fetchChat(null, groupChats)">
+            <p class="name">
+              {{ fetchChat(null, groupChats)?.groupDetails?.name }}
+            </p>
+            <p class="online-div">
+              {{ fetchChat(null, groupChats)!.recipient.length }}
+              {{
+                fetchChat(null, groupChats)!.recipient.length > 1
+                  ? "Members"
+                  : "Member"
+              }},
+              <span
+                class="online"
+                *ngIf="getOnlineGroupMembers(fetchChat(null, groupChats)!) > 0"
+                >{{
+                  getOnlineGroupMembers(fetchChat(null, groupChats)!)
+                }}
+                Online</span
+              >
+            </p>
+          </ng-container>
+        </div>
+      </div>
+      <div class="header-right">
+        <ng-container *ngIf="fetchChat(null, groupChats)">
+          <div class="group-mem-icons">
+            <div
+              class="container"
+              *ngFor="
+                let member of fetchChat(null, groupChats)?.recipient;
+                let i = index
+              "
+            >
+              <div class="img-container" *ngIf="i <= 3">
+                <img src="/api/fetch-pic/profile/{{ member.id }}" alt="" />
+              </div>
+            </div>
+
+            <div
+              class="extra-count"
+              *ngIf="fetchChat(null, groupChats)!.recipient.length > 4"
+            >
+              +{{ fetchChat(null, groupChats)!.recipient.length - 4 }}
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="hr-show-info" (click)="togglePage('add', 'info')">
+          <i class="fas fa-circle-info"></i>
+        </div>
+        <div class="hr-show-search" (click)="showSearchBar('hr')">
+          <i class="fas fa-magnifying-glass"></i>
+        </div>
+        <div class="hr-show-chat-menu" (click)="showHrChatMenu()">
+          <i class="fas fa-ellipsis-vertical"></i>
+        </div>
+
+        <div class="hr-chat-menu">
+          <button (click)="closeChat()">
+            <i class="fas fa-close"></i>
+            <div>Close Chat</div>
+          </button>
+          <button (click)="clearChat()">
+            <i class="fas fa-broom"></i>
+            <div>Clear Messages</div>
+          </button>
+          <button (click)="deleteChat(currentRoomId!)">
+            <i class="fas fa-trash-can"></i>
+            <div>Delete Chat</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="hr-search-bar">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search..." (keyup)="searchInChat()" />
+        <i class="fas fa-close" (click)="hideSearchBar('hr')"></i>
+      </div>
+    </div>
+
+    <div class="major-content" [class.close]="!currentRoomId">
+      <ng-container
+        *ngFor="
+          let message of fetchChat(null, chats)?.messages ||
+            fetchChat(null, groupChats)?.messages
+        "
+      >
+        <div
+          class="message-div-container"
+          *ngIf="!message.deleteState.forMe.includes(username)"
+          [class.sent]="message.sender.id === isAuth"
+          [attr.data.message-id]="message.id"
+        >
+          <div class="img-container">
+            <img
+              src="/api/fetch-pic/profile/{{ message.sender.id }}"
+              alt="image"
+            />
+          </div>
+
+          <div class="message-details">
+            <div class="top">
+              <ng-container *ngIf="message.sender.id === isAuth">
+                <i
+                  *ngIf="message.sendStatus.status === 'sent'"
+                  class="fas fa-check"
+                ></i>
+                <svg
+                  width="20px"
+                  height="20px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  *ngIf="message.sendStatus.status !== 'sent'"
+                >
+                  <path
+                    d="M1.5 12.5L5.57574 16.5757C5.81005 16.8101 6.18995 16.8101 6.42426 16.5757L9 14"
+                    [attr.stroke]="
+                      message.sendStatus.status === 'read' &&
+                      !fetchChat(null, groupChats)
+                        ? 'rgb(95, 95, 238)'
+                        : 'rgb(0,0,0)'
+                    "
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M16 7L12 11"
+                    [attr.stroke]="
+                      message.sendStatus.status === 'read' &&
+                      !fetchChat(null, groupChats)
+                        ? 'rgb(95, 95, 238)'
+                        : 'rgb(0,0,0)'
+                    "
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                  <path
+                    d="M7 12L11.5757 16.5757C11.8101 16.8101 12.1899 16.8101 12.4243 16.5757L22 7"
+                    [attr.stroke]="
+                      message.sendStatus.status === 'read' &&
+                      !fetchChat(null, groupChats)
+                        ? 'rgb(95, 95, 238)'
+                        : 'rgb(0,0,0)'
+                    "
+                    stroke-width="2"
+                    stroke-linecap="round"
+                  />
+                </svg>
+              </ng-container>
+
+              <div class="name">
+                <ng-container *ngIf="message.sender.id === isAuth"
+                  >You</ng-container
+                >
+                <ng-container *ngIf="message.sender.id !== isAuth">
+                  {{ message.sender.name }}
+                </ng-container>
+              </div>
+              <div class="time">{{ message.sendStatus.sendTime }}</div>
+              <i
+                class="fas fa-ellipsis"
+                (click)="showMenu($event, 'text-menu')"
+              ></i>
+
+              <div class="text-menu">
+                <ng-container *ngIf="!message.deleteState.forEveryone">
+                  <button (click)="showReplyMenu('show', $event)">
+                    <i class="fas fa-reply"></i>
+                    <div>Reply</div>
+                  </button>
+                  <button>
+                    <i class="fas fa-share"></i>
+                    <div>Forward</div>
+                  </button>
+                  <ng-container *ngIf="message.sender.id === isAuth">
+                    <button (click)="deleteMessage($event)">
+                      <i class="fas fa-trash-can"></i>
+                      <div>Delete</div>
+                    </button>
+                  </ng-container>
+                  <button (click)="deleteMessageForMe($event)">
+                    <i class="fas fa-trash-can"></i>
+                    <div>Delete For Me</div>
+                  </button>
+                </ng-container>
+                <ng-container *ngIf="message.deleteState.forEveryone">
+                  <button (click)="deleteMessageForMe($event)">
+                    <i class="fas fa-trash-can"></i>
+                    <div>Delete For Me</div>
+                  </button>
+                </ng-container>
+              </div>
+            </div>
+
+            <div class="message-reply" *ngIf="message.reply">
+              <div class="img-container">
+                <img
+                  src="/api/fetch-pic/profile/{{ message.reply.id }}"
+                  alt="profile"
+                />
+              </div>
+
+              <div class="details">
+                <div class="top-reply">
+                  <div class="name">{{ message.reply.name }}</div>
+                  <div class="time">{{ message.reply.time }}</div>
+                </div>
+                <div class="bottom-reply">
+                  {{ message.reply.message }}
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="!message.deleteState.forEveryone" class="bottom">
+              {{ message.message }}
+            </div>
+
+            <div class="bottom bold" *ngIf="message.deleteState.forEveryone">
+              This message has been deleted
+            </div>
+          </div>
+        </div>
+      </ng-container>
+
+      <div class="date-separating">
+        <span class="date">Today, July 24</span>
+      </div>
+    </div>
+
+    <div class="major-text-input" [class.close]="!currentRoomId">
+      <div class="reply">
+        <div class="main" *ngIf="reply">
+          <div class="img-container">
+            <img src="../../../../assets/test-imgs/4.jpg" alt="profile" />
+          </div>
+
+          <div class="details">
+            <div class="top">
+              <div class="name">{{ reply.name }}</div>
+              <div class="time">{{ reply.time }}</div>
+            </div>
+            <div class="bottom">
+              {{ reply.message }}
+            </div>
+          </div>
+        </div>
+        <i class="fas fa-close" (click)="showReplyMenu('hide')"></i>
+      </div>
+      <div class="text-space">
+        <input
+          type="text"
+          placeholder="Type your message here..."
+          (focus)="setTypingStatus('add')"
+          (blur)="setTypingStatus('remove')"
+        />
+        <button (click)="sendMessage()">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="info" *ngIf="currentRoomId">
+    <ng-container *ngIf="fetchChat(null, groupChats)">
+      <div class="header">
+        <div>Group Info</div>
+        <button (click)="togglePage('remove', 'info')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+
+      <div class="img-container img-xl">
+        <img
+          src="/api/fetch-pic/group/{{
+            fetchChat(null, groupChats)!.chatRoomId
+          }}"
+          alt=""
+        />
+      </div>
+
+      <div class="name_group-count">
+        <div class="name">
+          <span>{{ fetchChat(null, groupChats)!.groupDetails.name }}</span>
+          <i class="fas fa-pencil"></i>
+        </div>
+
+        <div class="group-count">
+          Group <i class="fas fa-circle"></i>
+          {{ fetchChat(null, groupChats)!.recipient.length }}
+          {{
+            fetchChat(null, groupChats)!.recipient.length > 1
+              ? "Members"
+              : "Member"
+          }}
+        </div>
+      </div>
+
+      <div class="group-details">
+        <div class="header">
+          <div>Group Description</div>
+          <button>
+            <i class="fas fa-pencil"></i>
+          </button>
+        </div>
+        <div class="description">
+          {{ fetchChat(null, groupChats)!.groupDetails.description }}
+        </div>
+        <div class="details">
+          Group created by
+          {{ fetchChat(null, groupChats)!.groupDetails.createdBy }}, on
+          {{ fetchChat(null, groupChats)!.groupDetails.createdAt }}
+        </div>
+        <div class="details">
+          Group id:
+          <strong>{{ fetchChat(null, groupChats)!.chatRoomId }}</strong>
+        </div>
+      </div>
+
+      <div class="members-div">
+        <div class="header">
+          <div>
+            {{ fetchChat(null, groupChats)!.recipient.length }}
+            {{
+              fetchChat(null, groupChats)!.recipient.length > 1
+                ? "Members"
+                : "Member"
+            }}
+          </div>
+          <button (click)="showSearchBar('md')">
+            <i class="fas fa-magnifying-glass"></i>
+          </button>
+        </div>
+
+        <div class="md-search-bar">
+          <i class="fas fa-magnifying-glass"></i>
+          <input type="text" placeholder="Search..." />
+          <i class="fas fa-close" (click)="hideSearchBar('md')"></i>
+        </div>
+
+        <div class="members">
+          <div
+            class="member"
+            *ngFor="let member of fetchChat(null, groupChats)!.recipient"
+          >
+            <div class="img-container">
+              <img src="/api/fetch-pic/profile/{{ member.id }}" alt="" />
+            </div>
+            <div class="name-div">
+              <div class="name">
+                {{ member.username === username ? "You" : member.username }}
+              </div>
+              <div class="status">
+                {{
+                  fetchChat(null, groupChats)!.groupDetails.admins.includes(
+                    member.id
+                  )
+                    ? "Admin"
+                    : "Member"
+                }}
+              </div>
+            </div>
+            <i class="fas fa-message"></i>
+          </div>
+        </div>
+      </div>
+
+      <button class="exit-group" (click)="exitGroup()">
+        <i class="fas fa-door-open"></i>
+        <div>Exit Group</div>
+      </button>
+    </ng-container>
+
+    <ng-container *ngIf="fetchChat(null, chats)">
+      <div class="header">
+        <div>Info</div>
+        <button (click)="togglePage('remove', 'info')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+
+      <div class="img-container img-xl">
+        <img
+          *ngIf="fetchChat(null, chats)"
+          src="/api/fetch-pic/profile/{{
+            getChatRecipient(fetchChat(null, chats)!.recipient).id
+          }}"
+          alt=""
+        />
+      </div>
+
+      <div class="container" *ngIf="fetchChat(null, chats)">
+        <div class="username">
+          {{ getChatRecipient(fetchChat(null, chats)!.recipient).username }}
+        </div>
+        <button
+          routerLink="/user/profile/"
+          [queryParams]="{
+            id: getChatRecipient(fetchChat(null, chats)!.recipient).id
+          }"
+          class="view-profile"
+        >
+          View Profile
+        </button>
+      </div>
+    </ng-container>
+  </div>
+
+  <div class="modal-div">
+    <div class="modal-new-chat">
+      <div class="header">
+        <div>New Chat</div>
+        <button (click)="showOrHideModal('new-chat', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+      <div class="search-div">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search..." />
+      </div>
+      <div class="search-results">
+        <div
+          class="search-result"
+          *ngFor="let user of allUsers; let i = index"
+          [attr.data-username]="user.username"
+          (click)="selectNewChat($event)"
+        >
+          <div class="img-container">
+            <img src="/api/fetch-pic/profile/{{ user.id }}" alt="img" />
+          </div>
+          <div class="details">
+            <div class="name">{{ user.username }}</div>
+            <div class="active" *ngIf="onlineUsers.includes(user.username)">
+              Online
+            </div>
+          </div>
+          <div class="selected-status-container">
+            <div class="selected-status" [class.show]="i === 0"></div>
+          </div>
+        </div>
+      </div>
+
+      <button class="chat-btn" (click)="newChat()">
+        <i class="fas fa-paper-plane"></i>
+        <div>New Chat</div>
+      </button>
+    </div>
+
+    <div class="modal-new-group">
+      <div class="header">
+        <div>New Group</div>
+        <button (click)="showOrHideModal('new-group', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+      <label class="image-upload-label" for="image-upload">
+        <input
+          type="file"
+          accept="image/*"
+          id="image-upload"
+          (change)="onFileSelected($event)"
+        />
+        <div class="img-container">
+          <img
+            [src]="
+              !modalMemory || !modalMemory.currentImgSrc
+                ? '../../../../assets/images/default-group-icon.png'
+                : modalMemory.currentImgSrc
+            "
+            alt="img"
+          />
+        </div>
+        <div class="camera-div">
+          <i class="fas fa-camera"></i>
+        </div>
+
+        <button class="remove-btn" (click)="modalMemory = {}">
+          <i class="fas fa-close"></i>
+        </button>
+      </label>
+      <div class="details">
+        <div class="name-div">
+          <div>Group Name</div>
+          <input type="text" />
+        </div>
+
+        <div class="description-div">
+          <div>Description</div>
+          <textarea cols="30" rows="2" placeholder="100 words max"></textarea>
+        </div>
+      </div>
+
+      <div class="group-form">
+        <button (click)="modalMemory.groupForm = 'public'">
+          <div>Public</div>
+          <div class="selected-status-container">
+            <div
+              class="selected-status"
+              [class.show]="
+                modalMemory.groupForm === 'public' || !modalMemory.groupForm
+              "
+            ></div>
+          </div>
+        </button>
+        <button (click)="modalMemory.groupForm = 'private'">
+          <div>Private</div>
+          <div class="selected-status-container">
+            <div
+              class="selected-status"
+              [class.show]="modalMemory.groupForm === 'private'"
+            ></div>
+          </div>
+        </button>
+      </div>
+
+      <div
+        class="password-div"
+        [class.show]="modalMemory.groupForm === 'private'"
+      >
+        <div>Password</div>
+        <input type="text" />
+      </div>
+
+      <button class="create-btn" (click)="createGroup()">
+        <i class="fas fa-plus"></i>
+        <div>Create</div>
+      </button>
+    </div>
+
+    <div class="modal-clear-delete">
+      <div class="header">
+        <div>Delete Chat</div>
+        <button (click)="showOrHideModal('clear-delete', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+
+      <i class="fas fa-trash-can icon"></i>
+
+      <div class="warning">
+        Deleted or cleared chats / messages are unrecoverable. Are you sure you
+        want to proceed?
+      </div>
+
+      <button
+        class="delete-btn"
+        (click)="delete(deleteForm.e, deleteForm.message)"
+        *ngIf="deleteForm"
+      >
+        Delete
+      </button>
+    </div>
+
+    <div class="modal-forward-message">
+      <div class="header">
+        <div>Forward Message To</div>
+        <button (click)="showOrHideModal('forward-message', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+
+      <div class="search-div">
+        <i class="fas fa-magnifying-glass"></i>
+        <input type="text" placeholder="Search..." />
+      </div>
+
+      <div class="search-results">
+        <div class="search-result">
+          <div class="img-container">
+            <img src="../../../../assets/test-imgs/4.jpg" alt="" />
+          </div>
+          <div class="details">
+            <div class="name">Adam Armstrong</div>
+            <div class="active">Active 5 mins ago</div>
+          </div>
+          <div class="selected-status-container">
+            <div class="selected-status show"></div>
+          </div>
+        </div>
+      </div>
+      <button class="send-btn">
+        <i class="fas fa-paper-plane"></i>
+        <div>Send</div>
+      </button>
+    </div>
+
+    <div class="modal-exit-group">
+      <div class="header">
+        <div>Exit Dev Team Group?</div>
+        <button (click)="showOrHideModal('exit-group', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+
+      <button class="exit-btn">Exit Group</button>
+    </div>
+
+    <div class="modal-join-group">
+      <div class="header">
+        <div>Join Group</div>
+        <button (click)="showOrHideModal('new-group', 'hide')">
+          <i class="fas fa-close"></i>
+        </button>
+      </div>
+      <div class="details">
+        <div class="name-div">
+          <div>Group Id</div>
+          <input type="text" />
+        </div>
+
+        <div class="group-form">
+          <button (click)="modalMemory.groupForm = 'public'">
+            <div>Public</div>
+            <div class="selected-status-container">
+              <div
+                class="selected-status"
+                [class.show]="
+                  modalMemory.groupForm === 'public' || !modalMemory.groupForm
+                "
+              ></div>
+            </div>
+          </button>
+          <button (click)="modalMemory.groupForm = 'private'">
+            <div>Private</div>
+            <div class="selected-status-container">
+              <div
+                class="selected-status"
+                [class.show]="modalMemory.groupForm === 'private'"
+              ></div>
+            </div>
+          </button>
+        </div>
+
+        <div
+          class="description-div password-div"
+          [class.show]="modalMemory.groupForm === 'private'"
+        >
+          <div>Password</div>
+          <input type="text" />
+        </div>
+      </div>
+
+      <button class="join-btn" (click)="joinGroup()">Join Group</button>
+    </div>
+  </div>
+</ng-container>

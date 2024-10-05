@@ -1,0 +1,76 @@
+app-root {
+  width: 100vw;
+  height: 100vh;
+}
+
+app-loading,
+app-home,
+app-category,
+app-post,
+app-login,
+app-signup,
+app-profile,
+app-bookmark,
+app-login-admin,
+app-chat {
+  width: 100%;
+  height: 100%;
+}
+
+app-loading,
+app-login,
+app-signup,
+app-profile,
+app-login-admin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+app-chat {
+  display: flex;
+  position: relative;
+}
+
+app-login,
+app-signup,
+app-login-admin {
+  background-color: rgb(162, 188, 197);
+}
+
+app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  box-shadow: 0 5px 5px 0 rgba(51, 49, 49, 0.2);
+  font-size: 14px;
+  background-color: white;
+}
+
+app-pagination {
+  display: flex;
+  flex-direction: column-reverse;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+app-about {
+  width: 100%;
+}
+
+app-footer {
+  border-top: 1px solid rgba(184, 170, 170, 0.5);
+  display: flex;
+  flex-direction: column;
+  column-gap: 30px;
+  margin: 75px 0;
+  padding-top: 20px;
+  width: 100%;
+}

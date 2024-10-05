@@ -1,0 +1,53 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<div class="home_container" *ngIf="!isLoading">
+  <app-header></app-header>
+
+  <div class="slider">
+    <a
+      *ngFor="let post of trendingPosts"
+      routerLink="/blog/post/{{ post.id }}"
+      class="slide"
+    >
+      <img src="/api/image/posts/featured-{{ post.id }}" alt="img" />
+      <p>
+        {{ post.title | brief : 10 : true }}
+      </p>
+    </a>
+
+    <button class="prev" (click)="prevSlide()">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <button class="next" (click)="nextSlide()">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+
+  <main>
+    <div class="major">
+      <div class="post-container">
+        <app-post-component
+          class="post-component"
+          *ngFor="let post of posts"
+          [post]="post"
+          [useHomeStyle]="true"
+        ></app-post-component>
+      </div>
+
+      <app-pagination
+        (postsOutput)="onPostOutput($event)"
+        category="all"
+      ></app-pagination>
+    </div>
+
+    <app-side-div
+      class="minor"
+      [categories]="categories"
+      [trendingPosts]="trendingPosts"
+    ></app-side-div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

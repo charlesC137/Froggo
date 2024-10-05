@@ -1,0 +1,37 @@
+<div class="categories">
+  <p class="category-header">Categories</p>
+
+  <a
+    *ngFor="let category of categories"
+    class="category-div"
+    routerLink="/blog/category/{{ category.name }}"
+  >
+    <img src="/api/image/categories/{{ category.name }}" alt="" />
+    <div class="cat-div-details">
+      <div class="name">{{ category.name }}</div>
+      <div class="number">{{ category.postCount }}</div>
+    </div>
+  </a>
+</div>
+
+<div class="trending-posts">
+  <p class="header">Trending Posts</p>
+  <div class="tr-post" *ngFor="let post of trendingPosts">
+    <div class="tr-image">
+      <img src="/api/image/posts/featured-{{ post.id }}" alt="img" />
+      <div>{{ post.rank }}</div>
+    </div>
+    <div class="tr-details">
+      <a class="tr-category" routerLink="/blog/category/{{ post.category }}">{{
+        post.category
+      }}</a>
+      <a class="tr-brief" routerLink="/blog/post/{{ post.id }}">
+        {{ post.title | brief : 6 }}
+      </a>
+      <div class="tr-post-date">
+        <i class="far fa-clock"></i>
+        <p>{{ post.date }}</p>
+      </div>
+    </div>
+  </div>
+</div>

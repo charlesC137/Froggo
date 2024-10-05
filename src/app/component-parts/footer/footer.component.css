@@ -1,0 +1,30 @@
+.copyright {
+  margin-top: 100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contact-method {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.contact-method i {
+  color: var(--light-pc);
+}
+
+.contact-method a {
+  display: block;
+  margin-left: 20px;
+  transition: all 0.3s;
+}
+
+.contact-method a:hover {
+  color: var(--light-pc);
+}
+
+h3 {
+  color: var(--primary-color);
+}

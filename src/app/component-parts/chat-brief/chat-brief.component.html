@@ -1,0 +1,178 @@
+<div class="brief-img">
+  <div class="img-container">
+    <img
+      [src]="
+        brief.chatType === 'chat'
+          ? '/api/fetch-pic/profile/' + getChatRecipient(brief.recipient).id
+          : '/api/fetch-pic/group/' + brief.chatRoomId
+      "
+      alt="img"
+    />
+  </div>
+  <div
+    *ngIf="brief.chatType === 'chat'"
+    [class.online-status]="
+      onlineUsers.includes(getChatRecipient(brief.recipient).username)
+    "
+  ></div>
+</div>
+
+<div class="cb-left">
+  <div class="cb-name">
+    {{
+      brief.chatType === "chat"
+        ? getChatRecipient(brief.recipient).username
+        : brief.groupDetails.name
+    }}
+  </div>
+  <div class="cb-text" *ngIf="!getTypingUsers(brief.chatRoomId).length">
+    <!-- *ngIf="getLastMessageDetails(brief.messages).message !== 'deleted'" -->
+    <ng-container *ngIf="getLastMessageDetails(brief.messages).sendTime">
+      <strong *ngIf="brief.chatType === 'group'"
+        >{{
+          getLastMessageDetails(brief.messages).sender === username
+            ? "You"
+            : getLastMessageDetails(brief.messages).sender
+        }}:
+      </strong>
+      {{ getLastMessageDetails(brief.messages).message }}
+    </ng-container>
+    <ng-container
+      *ngIf="getLastMessageDetails(brief.messages).message === 'deleted'"
+    >
+      <span
+        style="
+          font-style: italic;
+          font-weight: 600;
+          color: rgba(34, 31, 31, 0.7);
+        "
+        >Message deleted</span
+      >
+    </ng-container>
+  </div>
+  <div class="cb-text" *ngIf="getTypingUsers(brief.chatRoomId).length">
+    <div class="typing-animation">
+      <ng-container *ngIf="brief.chatType === 'group'"
+        ><span style="font-weight: 700">{{
+          getTypingUsers(brief.chatRoomId)[0].username
+        }}</span>
+        is typing</ng-container
+      >
+      <ng-container *ngIf="brief.chatType === 'chat'">Typing</ng-container>
+      <i class="fas fa-ellipsis fa-bounce"></i>
+    </div>
+  </div>
+</div>
+
+<div class="cb-right">
+  <div
+    class="cb-date"
+    *ngIf="getLastMessageDetails(brief.messages).sendTime !== ''"
+  >
+    {{ getLastMessageDetails(brief.messages).sendTime }}
+  </div>
+  <div class="cb-icons">
+    <ng-container
+      *ngIf="
+        getLastMessageDetails(brief.messages).senderId !== '' &&
+        getLastMessageDetails(brief.messages).senderId !== isAuth &&
+        brief.chatRoomId !== currentRoomId
+      "
+    >
+      <div class="unread-count" *ngIf="unreadMessagesCount(brief.messages) > 0">
+        {{ unreadMessagesCount(brief.messages) }}
+      </div>
+    </ng-container>
+
+    <ng-container
+      *ngIf="
+        unreadMessagesCount(brief.messages) <= 0 &&
+        getLastMessageDetails(brief.messages).senderId === isAuth &&
+        brief.chatType === 'chat'
+      "
+    >
+      <i
+        *ngIf="
+          getLastMessageDetails(brief.messages).sendStatus?.status === 'sent'
+        "
+        class="fas fa-check"
+      ></i>
+      <svg
+        width="20px"
+        height="20px"
+        viewBox="0 0 24 24"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        *ngIf="
+          getLastMessageDetails(brief.messages).sendStatus?.status !== 'sent'
+        "
+      >
+        <path
+          d="M1.5 12.5L5.57574 16.5757C5.81005 16.8101 6.18995 16.8101 6.42426 16.5757L9 14"
+          [attr.stroke]="
+            getLastMessageDetails(brief.messages).sendStatus?.status === 'read'
+              ? 'rgb(95, 95, 238)'
+              : 'rgb(0,0,0)'
+          "
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <path
+          d="M16 7L12 11"
+          [attr.stroke]="
+            getLastMessageDetails(brief.messages).sendStatus?.status === 'read'
+              ? 'rgb(95, 95, 238)'
+              : 'rgb(0,0,0)'
+          "
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+        <path
+          d="M7 12L11.5757 16.5757C11.8101 16.8101 12.1899 16.8101 12.4243 16.5757L22 7"
+          [attr.stroke]="
+            getLastMessageDetails(brief.messages).sendStatus?.status === 'read'
+              ? 'rgb(95, 95, 238)'
+              : 'rgb(0,0,0)'
+          "
+          stroke-width="2"
+          stroke-linecap="round"
+        />
+      </svg>
+    </ng-container>
+
+    <i
+      class="fas fa-ellipsis-vertical"
+      (click)="showMenu($event, 'cb-dropdown')"
+    ></i>
+  </div>
+</div>
+
+<div class="cb-dropdown">
+  <button
+    *ngIf="!brief.filter.pinned.includes(isAuth.toString())"
+    (click)="setChatFilter(brief.chatRoomId, 'pinned', chats)"
+  >
+    Pin {{ brief.chatType }}
+  </button>
+  <button
+    *ngIf="brief.filter.pinned.includes(isAuth.toString())"
+    (click)="setChatFilter(brief.chatRoomId, 'pinned', chats)"
+  >
+    Unpin {{ brief.chatType }}
+  </button>
+  <button
+    *ngIf="!brief.filter.archived.includes(isAuth.toString())"
+    (click)="setChatFilter(brief.chatRoomId, 'archived', chats)"
+  >
+    Archive {{ brief.chatType }}
+  </button>
+  <button
+    *ngIf="brief.filter.archived.includes(isAuth.toString())"
+    (click)="setChatFilter(brief.chatRoomId, 'archived', chats)"
+  >
+    Unarchive {{ brief.chatType }}
+  </button>
+  <button (click)="deleteChat(brief.chatRoomId)">
+    Delete {{ brief.chatType }}
+  </button>
+</div>

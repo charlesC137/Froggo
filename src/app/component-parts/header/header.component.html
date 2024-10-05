@@ -1,0 +1,88 @@
+<div class="top">
+  <div class="logo-mobile">
+    <button (click)="showMenuMobile()">
+      <i class="fas fa-bars"></i>
+    </button>
+
+    <a (click)="scrollToTop()"
+      ><img src="../../assets/images/logo.png" alt="home"
+    /></a>
+  </div>
+
+  <div class="menu-mobile">
+    <div class="mm-container">
+      <div>
+        <button (click)="hideMenuMobile()"><i class="fas fa-close"></i></button>
+      </div>
+      <div>
+        <a
+          routerLink="/"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >Home</a
+        >
+        <a
+          routerLink="/about"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          >About</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <a class="logo-desktop" (click)="scrollToTop()">
+    <p>Froggo</p>
+    <img src="../../assets/images/logo.png" alt="logo" />
+  </a>
+
+  <div class="menu-desktop">
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >Home</a
+    >
+    <a
+      routerLink="/about"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      >About</a
+    >
+  </div>
+
+  <div class="utils">
+    <button class="search-btn" (click)="toggleSearchBar()">
+      <i class="fas fa-search"></i>
+    </button>
+
+    <ng-container *ngIf="isAuth">
+      <a routerLink="/user/bookmark">
+        <i class="fas fa-bookmark"></i>
+      </a>
+      <a class="message-count-a" routerLink="/user/chat">
+        <i class="fas fa-paper-plane"></i>
+        <div class="message-count" *ngIf="unreadCount > 0">
+          {{ unreadCount > 99 ? "99+" : unreadCount }}
+        </div>
+      </a>
+      <a
+        routerLink="/user/profile/"
+        [queryParams]="{ id: isAuth }"
+        class="profile-icon"
+      >
+        <img src="/api/fetch-pic/profile/{{ isAuth }}" alt="profile" />
+      </a>
+    </ng-container>
+
+    <ng-container *ngIf="!isAuth">
+      <button (click)="redirectToLogin()" class="login-btn">Log In</button>
+    </ng-container>
+  </div>
+</div>
+
+<div class="search-div">
+  <i class="fas fa-search"></i>
+  <input type="text" placeholder="Search..." />
+  <i class="fas fa-arrow-right" (click)="search()"></i>
+</div>

@@ -1,0 +1,25 @@
+div {
+  position: fixed;
+  z-index: 99999999;
+  background-color: red;
+  top: 20px;
+  padding: 10px 20px;
+  border-radius: 6px;
+  line-height: 25px;
+  font-size: 14px;
+  color: whitesmoke;
+  font-weight: 600;
+  max-width: 250px;
+  text-transform: capitalize;
+
+  visibility: hidden;
+  opacity: 0;
+  right: -300px;
+  transition: ease all 0.5s;
+}
+
+div.show {
+  visibility: visible;
+  opacity: 1;
+  right: 20px;
+}

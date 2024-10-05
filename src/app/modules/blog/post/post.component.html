@@ -1,0 +1,137 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+<ng-container *ngIf="!isLoading">
+  <app-header></app-header>
+  <main>
+    <div class="post">
+      <div class="post-banner">
+        <img
+          src="/api/image/posts/featured-{{ currentPost._id }}"
+          alt="image"
+        />
+        <div class="post-info">
+          <a
+            class="post-category"
+            routerLink="/blog/category/{{ currentPost.category }}"
+            >{{ currentPost.category }}</a
+          >
+          <div class="post-name">
+            {{ currentPost.title }}
+          </div>
+          <div class="post-date">
+            <i class="far fa-clock"></i>
+            <div>{{ currentPost.postDate }}</div>
+            <ng-container *ngIf="isAuth">
+              <div class="utils-div">
+                <i
+                  class="fas fa-heart"
+                  (click)="utilIcons('like')"
+                  [class.active]="isLiked"
+                ></i>
+                <i
+                  class="fas fa-bookmark"
+                  (click)="utilIcons('bookmark')"
+                  [class.active]="isBookmarked"
+                ></i>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <div class="post-content">
+        <div>
+          <ng-container *ngFor="let item of postDivs; let i = index">
+            <p class="writeup" *ngIf="i < postSplitNum">{{ item }}</p>
+          </ng-container>
+
+          <div class="img_writeup">
+            <img
+              src="/api/image/posts/post-{{ currentPost._id }}"
+              alt="image"
+            />
+            <ng-container *ngFor="let item of postDivs; let i = index">
+              <p class="writeup" *ngIf="i === postSplitNum">{{ item }}</p>
+            </ng-container>
+          </div>
+
+          <div class="quote-div">
+            <div class="quote-icon">
+              <i class="fas fa-quote-left"></i>
+            </div>
+            <div class="quote">
+              {{ currentPost.postQuote.quote }}
+            </div>
+
+            <div class="quoter">_{{ currentPost.postQuote.quoter }}_</div>
+          </div>
+
+          <ng-container *ngFor="let item of postDivs; let i = index">
+            <p class="writeup" *ngIf="i > postSplitNum">{{ item }}</p>
+          </ng-container>
+
+          <div class="post-comment">
+            <div class="comment-header">
+              <div>Comments</div>
+            </div>
+
+            <div class="comments">
+              <div
+                class="comment-div"
+                *ngFor="let comment of currentPost.comments"
+              >
+                <a
+                  routerLink="/user/profile"
+                  [queryParams]="{ id: comment.userId }"
+                  class="user-icon"
+                >
+                  <img
+                    src="/api/fetch-pic/profile/{{ comment.userId }}"
+                    alt="img"
+                  />
+                </a>
+
+                <div class="comment-side">
+                  <div class="comment-details">
+                    <div class="user-name">{{ comment.username }}</div>
+                    <div class="comment-f-details">
+                      <div>
+                        <i class="far fa-clock"></i>
+                        <div class="cd-text">{{ comment.date }}</div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="comment">
+                    {{ comment.comment }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <ng-container *ngIf="isAuth">
+              <div class="comment-header">
+                <div>Leave a comment</div>
+              </div>
+
+              <div class="post-btm-comment">
+                <textarea
+                  placeholder="Input Comment"
+                  cols="30"
+                  rows="5"
+                ></textarea>
+                <!-- <div class="error-msg"></div> -->
+                <button (click)="postComment()">Post</button>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="!isAuth">
+              <div class="prompt-login">Login to post comment</div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </main>
+</ng-container>

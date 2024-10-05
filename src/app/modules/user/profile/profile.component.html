@@ -1,0 +1,116 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<ng-container *ngIf="!isLoading && user"
+  ><app-header></app-header>
+
+  <ng-container *ngIf="!isEditing">
+    <main>
+      <div class="user-info">
+        <div class="user-img">
+          <img src="/api/fetch-pic/profile/{{ user._id }}" alt="img" />
+        </div>
+        <div class="user-details">
+          <h3>{{ user.username }}</h3>
+          <div class="optional-details-div">
+            <ng-container *ngIf="isCurrentUser">
+              <div class="login-time">
+                Last Login
+                <i class="far fa-clock"></i>:
+                <p>{{ user.lastLogin }}</p>
+              </div>
+            </ng-container>
+            <div>
+              <i class="far fa-envelope"></i>
+              <p>{{ user.email }}</p>
+            </div>
+            <div>
+              <i class="far fa-user"></i>
+              <p>{{ user.gender }}</p>
+            </div>
+          </div>
+          <ng-container *ngIf="user.location">
+            <div class="location-div">
+              <i class="fas fa-location-dot"></i>
+              <p>
+                {{ user.location }}
+              </p>
+            </div>
+          </ng-container>
+        </div>
+      </div>
+      <div class="user-bio">
+        {{ user.bio }}
+      </div>
+      <ng-container *ngIf="isCurrentUser">
+        <div class="edit-logout-div">
+          <button class="edit-btn" (click)="edit()">
+            <i class="fas fa-pencil"></i>
+            Edit Profile
+          </button>
+          <button class="logout-btn" (click)="logout()">
+            <i class="fas fa-right-to-bracket"></i>
+            Logout
+          </button>
+        </div>
+      </ng-container>
+    </main>
+  </ng-container>
+  <ng-container *ngIf="isCurrentUser && isEditing">
+    <main>
+      <div class="containing-div">
+        <div class="container-gender">
+          <div><p>Gender*:</p></div>
+          <div>
+            <input type="radio" name="gender" value="male" />
+            <label for="gender">Male</label>
+
+            <input type="radio" name="gender" value="female" />
+            <label for="gender">Female</label>
+
+            <input type="radio" name="gender" value="other" checked />
+            <label for="gender">Other</label>
+          </div>
+        </div>
+
+        <div class="container">
+          <p>Location:</p>
+          <input type="text" id="location-input" />
+        </div>
+
+        <div class="container profile-pic-div">
+          <label for="profile-pic-upload" class="custom-file-upload">
+            Upload Profile Picture
+          </label>
+          <input
+            id="profile-pic-upload"
+            type="file"
+            accept="image/*"
+            (change)="onPicChange($event)"
+          />
+          <i class="fas fa-check" [class.show-mark]="hasUploadPic"></i>
+        </div>
+        <textarea
+          placeholder="Input bio (between 10 - 100 words)"
+          rows="5"
+          cols="20"
+          id="bio-input"
+        ></textarea>
+      </div>
+
+      <!-- <div class="error-msg"></div> -->
+      <ng-container *ngIf="updatingProfile">
+        <img
+          class="loading"
+          src="../../../../assets/images/logo.png"
+          alt="logo"
+        />
+      </ng-container>
+      <div class="btm-btns">
+        <button class="done-edit-btn" (click)="updateProfile()">Done</button>
+        <button class="exit-btn" (click)="exitEdit()">Exit</button>
+      </div>
+    </main>
+  </ng-container>
+</ng-container>

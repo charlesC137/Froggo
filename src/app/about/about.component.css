@@ -1,0 +1,59 @@
+main {
+  margin-top: var(--header-margin);
+  padding: 0 150px 50px 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+h2,
+p {
+  line-height: 30px;
+}
+
+h2 {
+  font-style: oblique;
+}
+
+p {
+  font-size: 15px;
+}
+
+.container {
+  display: flex;
+  column-gap: 300px;
+}
+
+.image {
+  flex: 1;
+}
+
+.details {
+  flex: 4;
+}
+.image img {
+  width: 200px;
+  animation: image 0.5s infinite alternate;
+}
+
+@keyframes image {
+  from {
+    transform: rotate(10deg);
+  }
+
+  to {
+    transform: rotate(-10deg);
+  }
+}
+
+@media (max-width: 1200px) {
+  .container {
+    flex-direction: column;
+    align-items: center;
+    row-gap: 100px;
+  }
+
+  main {
+    padding: 0 50px;
+  }
+}

@@ -1,0 +1,44 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+<ng-container *ngIf="!isLoading">
+  <main>
+    <div class="images">
+      <div>
+        <label for="featured-img">Input Cover Image</label>
+        <input type="file" accept="image/*" id="featured-img" />
+      </div>
+
+      <div>
+        <label for="post-img">Input Post Image</label>
+        <input type="file" accept="image/*" id="post-img" />
+      </div>
+    </div>
+
+    <div class="post-content">
+      <input type="text" placeholder="Input Title" class="title-input" />
+      <p>Select Category:</p>
+      <select [(ngModel)]="selectedCategory">
+        <option disabled selected>Select an option</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+      <div class="add-cat-div">
+        <input type="text" placeholder="Add new category" />
+        <label for="cat-img">Input Category Image</label>
+        <input type="file" accept="image/*" id="cat-img" />
+        <button class="add-category-btn" (click)="addcategory()">
+          Add New Category
+        </button>
+      </div>
+
+      <p class="error-msg"></p>
+      <textarea cols="30" rows="10" placeholder="Input Text"></textarea>
+    </div>
+
+    <div class="post-btn">
+      <button (click)="submit()"><i class="fas fa-plus"></i>Post</button>
+    </div>
+  </main>
+</ng-container>

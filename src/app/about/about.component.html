@@ -1,0 +1,40 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<ng-container *ngIf="!isLoading">
+  <app-header></app-header>
+
+  <main>
+    <div class="container">
+      <div class="image">
+        <img src="../../assets/images/logo.png" alt="logo" />
+      </div>
+      <div class="details">
+        <h2>Thank you for visiting my site.</h2>
+        <strong>Our Journey</strong>
+        <p>
+          Our journey began with a simple idea: to create a blog that stands out
+          in the crowded digital landscape by focusing on authenticity,
+          relevance, and value. We recognized that in today’s fast-paced world,
+          finding reliable, well-researched, and engaging content can be a
+          challenge. Driven by this realization, we set out to build a platform
+          where readers can find trustworthy information and thought-provoking
+          content across various topics.
+        </p>
+        <p>
+          As we look to the future, we are excited about the opportunities to
+          expand our content offerings and explore new topics. We are committed
+          to evolving with the times and staying relevant to our readers’ needs
+          and interests. Your continued support and engagement are crucial to
+          our success, and we are grateful for the opportunity to be part of
+          your digital journey. Thank you for visiting our blog. We hope you
+          find our content valuable and enjoyable, and we look forward to
+          continuing to provide you with insights, inspiration, and engaging
+          discussions.
+        </p>
+      </div>
+    </div>
+    <app-footer></app-footer>
+  </main>
+</ng-container>

@@ -1,0 +1,53 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<div class="home_container" *ngIf="!isLoading">
+  <app-header></app-header>
+
+  <div class="top">
+    <i class="fas fa-house-chimney"></i>
+    <a routerLink="/">HOME</a>
+    <i class="fas fa-chevron-right"></i>
+    <div>USER</div>
+    <i class="fas fa-chevron-right"></i>
+    <div>{{ username }}</div>
+    <i class="fas fa-chevron-right"></i>
+    <div>BOOKMARK</div>
+  </div>
+
+  <main>
+    <div class="major">
+      <ng-container *ngIf="itemsInBookmark">
+        <div class="post-container">
+          <app-post-component
+            class="post-component"
+            *ngFor="let post of posts"
+            [post]="post"
+          ></app-post-component>
+        </div>
+
+        <app-pagination
+          (usernameOutput)="onUsernameOutput($event)"
+          (bookmarkItemsOutput)="onBookmarkItems($event)"
+          (postsOutput)="onPostOutput($event)"
+          [category]="category"
+        ></app-pagination>
+      </ng-container>
+      <ng-container *ngIf="!itemsInBookmark">
+        <div class="empty-bkm">
+          <img src="../../../../assets/images/page-error.png" alt="img" />
+          <h2>No post found</h2>
+        </div>
+      </ng-container>
+    </div>
+
+    <app-side-div
+      class="minor"
+      [trendingPosts]="trendingPosts"
+      [categories]="sideDivCategories"
+    ></app-side-div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

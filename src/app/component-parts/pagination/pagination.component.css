@@ -1,0 +1,49 @@
+main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  column-gap: 10px;
+  background-color: var(--light-pc);
+  border-radius: 3px;
+  padding: 4px 20px;
+  color: white;
+  margin-top: 20px;
+}
+
+div {
+  font-size: 20px;
+  font-weight: 600;
+  width: 40px;
+  text-align: center;
+}
+
+i {
+  font-size: 15px;
+}
+
+button {
+  color: white;
+  cursor: pointer;
+  width: 40px;
+  padding: 0;
+}
+
+.inactive {
+  opacity: 0.5;
+  cursor: default;
+}
+
+img {
+  width: 25px;
+  animation: loading 0.5s infinite alternate;
+}
+
+@keyframes loading {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.2);
+  }
+}

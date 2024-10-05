@@ -1,0 +1,145 @@
+.home_container {
+  margin-top: var(--header-margin);
+  padding: 0 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slider {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 5px;
+}
+
+.slide {
+  width: 100%;
+  height: 300px;
+  position: absolute;
+  transition: transform 0.5s ease;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.slide img:hover {
+  transform: scale(1.05);
+}
+
+.prev,
+.next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  background-color: rgba(235, 226, 226, 0.7);
+  transition: all 0.3s;
+}
+
+.prev {
+  left: 10px;
+}
+
+.next {
+  right: 10px;
+}
+
+.prev:hover,
+.next:hover {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+}
+
+.slide p {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  overflow: hidden;
+  color: white;
+  font-style: italic;
+  font-size: 17px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 10px 10px 5px 10px;
+  text-align: center;
+  text-wrap: balance;
+  text-transform: capitalize;
+}
+
+main {
+  display: flex;
+  column-gap: 50px;
+  width: 100%;
+  padding-top: 100px;
+}
+
+.major,
+.minor {
+  width: 100%;
+}
+
+.major {
+  flex: 2.5;
+}
+
+.minor {
+  flex: 1;
+}
+
+.post-container {
+  width: 100%;
+  height: fit-content;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  column-gap: 30px;
+  row-gap: 30px;
+  margin-bottom: 100px;
+}
+
+.post-component {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 700px) {
+  .home_container {
+    padding: 20px;
+    margin-top: 100px;
+  }
+
+  main {
+    flex-direction: column-reverse;
+  }
+
+  .minor {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+
+@media (min-width: 700px) and (max-width: 1260px) {
+  .home_container {
+    padding: 70px;
+  }
+
+  .minor {
+    min-width: 250px;
+  }
+}
+
+@media (max-width: 1000px) and (min-width: 700px) {
+  .post-container {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

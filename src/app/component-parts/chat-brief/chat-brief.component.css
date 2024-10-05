@@ -1,0 +1,137 @@
+.brief-img,
+.img-container {
+  min-width: 40px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.brief-img {
+  position: relative;
+  margin: auto 0;
+  overflow: visible;
+}
+
+.img-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.brief-img .online-status {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: var(--light-pc);
+  top: 0;
+  right: 0;
+  border-radius: 50%;
+}
+
+.cb-name {
+  font-size: 16px;
+  margin: auto 0;
+  color: var(--faint-black);
+  font-weight: 700;
+}
+
+.cb-text {
+  font-size: 14px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.cb-right,
+.cb-left {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.cb-date {
+  font-size: 12px;
+  text-align: center;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.cb-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  margin: auto 0;
+}
+
+.cb-icons .fas {
+  width: 20px;
+  margin-left: auto;
+  text-align: center;
+}
+
+.cb-icons .fa-ellipsis-vertical {
+  cursor: pointer;
+  text-align: center;
+}
+
+.typing-animation {
+  color: rgb(114, 187, 114);
+  font-size: 14px;
+}
+
+.typing-animation .fas {
+  animation-duration: 0.5s;
+}
+
+.unread-count {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.cb-dropdown {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 4px rgb(200, 196, 196);
+  top: 90%;
+  right: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: ease all 0.3s;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.cb-dropdown button {
+  width: 100%;
+  text-align: start;
+  text-transform: capitalize;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  transition: background-color 0.3s;
+}
+
+.cb-dropdown button:hover {
+  background-color: rgb(208, 232, 208);
+}
+
+.cb-dropdown.show-cb-dropdown {
+  z-index: 10;
+  visibility: visible;
+  opacity: 1;
+  right: 10px;
+}

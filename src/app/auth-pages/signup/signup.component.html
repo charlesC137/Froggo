@@ -1,0 +1,29 @@
+<main>
+  <div class="left">
+    <img src="../../assets/images/auth-bg.png" alt="img" />
+  </div>
+  <div class="right">
+    <div class="input-section">
+      <div class="header">E-mail</div>
+      <input type="text" placeholder="johnson@gmail.com" class="email-input" />
+
+      <div class="header">Username</div>
+      <input type="text" placeholder="johnson123" class="username-input" />
+
+      <div class="header">
+        <div>Password</div>
+        <i class="far fa-eye" (click)="toggleView()"></i>
+      </div>
+      <input type="password" class="password-input" />
+    </div>
+
+    <div class="error-msg"></div>
+
+    <button class="sign-up-btn" (click)="signUp()">Sign Up</button>
+
+    <div class="links">
+      <a routerLink="/login">Log In</a>
+      <a routerLink="/">Home</a>
+    </div>
+  </div>
+</main>

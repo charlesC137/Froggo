@@ -1,0 +1,56 @@
+<ng-container *ngIf="isLoading">
+  <app-loading></app-loading>
+</ng-container>
+
+<div class="home_container" *ngIf="!isLoading">
+  <app-header></app-header>
+
+  <div class="top">
+    <i class="fas fa-house-chimney"></i>
+    <a routerLink="/">Home</a>
+    <i class="fas fa-chevron-right"></i>
+    <div>Blog</div>
+    <i class="fas fa-chevron-right"></i>
+
+    <ng-container *ngIf="!searchState">
+      <div>Category</div>
+      <i class="fas fa-chevron-right"></i>
+      <div>{{ category }}</div>
+    </ng-container>
+
+    <ng-container *ngIf="searchState && searchQuery">
+      <div>Search</div>
+      <i class="fas fa-chevron-right"></i>
+      <div>
+        {{ searchQuery | brief : 13 }}
+      </div>
+    </ng-container>
+  </div>
+
+  <main>
+    <div class="major">
+      <div class="post-container">
+        <app-post-component
+          class="post-component"
+          *ngFor="let post of posts"
+          [post]="post"
+        ></app-post-component>
+      </div>
+
+      <app-pagination
+        (postsOutput)="onPostOutput($event)"
+        (searchQueryOutput)="onSQOutput($event)"
+        [category]="category"
+        [searchState]="searchState"
+      ></app-pagination>
+    </div>
+
+    <app-side-div
+      class="minor"
+      [trendingPosts]="trendingPosts"
+      [categories]="sideDivCategories"
+    ></app-side-div>
+  </main>
+
+  <app-footer></app-footer>
+</div>

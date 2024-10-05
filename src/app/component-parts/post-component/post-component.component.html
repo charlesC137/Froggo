@@ -1,0 +1,60 @@
+<link *ngIf="useHomeStyle" rel="stylesheet" href="home.css" />
+<link *ngIf="!useHomeStyle" rel="stylesheet" href="default.css" />
+
+<ng-container *ngIf="useHomeStyle">
+  <a class="p-i" routerLink="/blog/post/{{ post._id }}">
+    <img src="/api/image/posts/featured-{{ post._id }}" alt="img" />
+  </a>
+  <div class="p-info">
+    <a class="post-category" routerLink="/blog/category/{{ post.category }}">{{
+      post.category
+    }}</a>
+    <a class="p-n" routerLink="/blog/post/{{ post._id }}">{{ post.title }}</a>
+    <div class="p-d">
+      <div>
+        <i class="far fa-clock"></i>
+        <p class="post-date">{{ post.postDate }}</p>
+      </div>
+      <ng-container *ngIf="isAuth">
+        <div>
+          <i class="far fa-heart"></i>
+          <p class="like-count">{{ post.likeCount.length }}</p>
+        </div>
+        <div>
+          <i class="far fa-message"></i>
+          <p class="comment-count">{{ post.comments.length }}</p>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="!useHomeStyle">
+  <a class="post-image" routerLink="/blog/post/{{ post._id }}">
+    <img src="/api/image/posts/featured-{{ post._id }}" alt="img" />
+  </a>
+  <div class="post-info">
+    <a class="post-name" routerLink="/blog/post/{{ post._id }}">{{
+      post.title
+    }}</a>
+    <div class="post-details">
+      <div>
+        <i class="far fa-clock"></i>
+        <p class="post-date">{{ post.postDate }}</p>
+      </div>
+      <ng-container *ngIf="isAuth">
+        <div>
+          <i class="far fa-heart"></i>
+          <p class="like-count">{{ post.likeCount.length }}</p>
+        </div>
+        <div>
+          <i class="far fa-message"></i>
+          <p class="comment-count">{{ post.comments.length }}</p>
+        </div>
+      </ng-container>
+    </div>
+    <p class="post-brief">
+      {{ post.postContent | brief : 25 }}
+    </p>
+  </div>
+</ng-container>

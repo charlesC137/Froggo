@@ -1,0 +1,160 @@
+.categories,
+.trending-posts {
+  display: flex;
+  flex-direction: column;
+  row-gap: 30px;
+  margin-bottom: 40px;
+}
+
+.category-header,
+.trending-posts .header {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 700;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  column-gap: 10px;
+  margin-bottom: 10px;
+}
+
+.category-header::after,
+.trending-posts .header::after {
+  content: "";
+  height: 1px;
+  flex: 1;
+  display: block;
+  background-color: var(--border-color);
+}
+
+.category-div {
+  display: flex;
+  align-items: center;
+  height: 90px;
+  overflow: hidden;
+  border-radius: 5px;
+  position: relative;
+  transition: transform 0.3s;
+}
+
+.category-div img {
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  object-fit: cover;
+}
+
+.cat-div-details {
+  position: absolute;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
+  height: 100%;
+  top: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.cat-div-details div {
+  font-size: 18px;
+  font-weight: 600;
+  padding: 0 20px;
+}
+
+.cat-div-details .name {
+  margin-right: auto;
+  margin-left: 10px;
+  text-transform: capitalize;
+}
+
+.cat-div-details .number {
+  margin-right: 10px;
+}
+
+.category-div:hover {
+  transform: scale(1.1);
+}
+
+.tr-post {
+  display: grid;
+  height: 100px;
+  column-gap: 20px;
+  grid-template-columns: 100px 1fr;
+  margin-bottom: 20px;
+}
+
+.tr-image {
+  height: 100%;
+  border-radius: 50%;
+}
+
+.tr-image img {
+  height: 100px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.tr-image div {
+  transform: translate(10%, -550%);
+  background-color: black;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+}
+
+.tr-details {
+  display: flex;
+  flex-direction: column;
+  height: 100px;
+}
+
+.tr-category {
+  color: var(--primary-color);
+  display: block;
+  margin-bottom: 7px;
+  font-weight: 700;
+  transition: all 0.3s;
+  text-transform: capitalize;
+}
+
+.tr-category:hover {
+  transform: scale(1.01);
+  color: var(--light-pc);
+}
+
+.tr-brief {
+  font-size: 15px;
+  font-weight: 700;
+  color: rgb(47, 45, 45);
+  transition: all 0.3s;
+  text-transform: capitalize;
+}
+
+.tr-brief:hover {
+  color: var(--light-pc);
+  text-decoration: underline;
+}
+
+.tr-post-date {
+  display: flex;
+  align-items: center;
+  color: rgb(160, 146, 146);
+  margin-top: auto;
+}
+
+.tr-post-date p {
+  margin: 0;
+  margin-left: 10px;
+}
+
+@media (min-width: 700px) and (max-width: 1260px) {
+  .tr-brief {
+    font-size: 13.5px;
+  }
+}
