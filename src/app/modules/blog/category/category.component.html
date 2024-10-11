@@ -30,11 +30,17 @@
   <main>
     <div class="major">
       <div class="post-container">
-        <app-post-component
-          class="post-component"
-          *ngFor="let post of posts"
-          [post]="post"
-        ></app-post-component>
+        <ng-container *ngIf="posts.length > 0">
+          <app-post-component
+            class="post-component"
+            *ngFor="let post of posts"
+            [post]="post"
+          ></app-post-component>
+        </ng-container>
+        <div class="empty-bkm" *ngIf="posts.length === 0">
+          <img src="../../../../assets/images/page-error.png" alt="img" />
+          <h2>No post found</h2>
+        </div>
       </div>
 
       <app-pagination

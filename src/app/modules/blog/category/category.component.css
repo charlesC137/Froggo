@@ -74,6 +74,21 @@ main {
   margin-bottom: 60px;
 }
 
+.empty-bkm {
+  display: flex;
+  column-gap: 30px;
+}
+
+.empty-bkm img {
+  width: 400px;
+  height: auto;
+  object-fit: cover;
+}
+
+.empty-bkm h2 {
+  padding-top: 150px;
+}
+
 @media (max-width: 700px) {
   .home_container {
     padding: 20px;
@@ -113,5 +128,18 @@ main {
     font-size: 12px;
     margin-right: 10px;
     margin-left: 7px;
+  }
+
+  .empty-bkm {
+    flex-direction: column;
+  }
+
+  .empty-bkm img {
+    width: 100%;
+    height: 300px;
+  }
+
+  .empty-bkm h2 {
+    padding-top: 0;
   }
 }

@@ -47,8 +47,8 @@ export class PaginationComponent implements AfterViewInit, OnChanges {
     this.searchStateSrv.action$.subscribe(async () => {
       await this.setFetchFormat();
     });
-
     this.loadingNewPage = false;
+
     this.cdr.detectChanges();
   }
 
@@ -82,7 +82,9 @@ export class PaginationComponent implements AfterViewInit, OnChanges {
     this.pageCount = resJson.postPageCount;
     this.posts = resJson.posts;
     this.setInactive();
-    this.postsOutput.emit(this.posts);
+    if (!this.searchState) {
+      this.postsOutput.emit(this.posts);
+    }
     this.loadingNewPage = false;
   }
 

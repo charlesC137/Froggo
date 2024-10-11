@@ -22,7 +22,7 @@ export class CategoryComponent implements OnInit {
 
   isLoading = true;
   isAuth!: boolean | string;
-  posts!: Post[];
+  posts: Post[] = [];
   category!: string;
   sideDivCategories!: Category[];
   trendingPosts!: TrendingPost[];

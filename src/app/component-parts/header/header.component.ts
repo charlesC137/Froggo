@@ -137,9 +137,7 @@ export class HeaderComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['/error']);
       } else {
         this.searchStateSrv.triggerAction();
-        this.router.navigate(['/blog/search'], {
-          queryParams: { search: true },
-        });
+        this.router.navigate(['/blog/search']);
       }
     }
   }
